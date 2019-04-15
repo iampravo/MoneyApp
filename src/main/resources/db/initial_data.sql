@@ -1,29 +1,20 @@
 
-
-INSERT INTO currency (currency_id, currency_name, currency_code)
-VALUES
-  (1, 'US Dollar','USD'),
-  (2, 'Rupee', 'INR'),
-  (3, 'Pound', 'GBP');
-
-INSERT INTO transaction_status (id, name)
-VALUES
-       (1, 'Scheduled'),
-       (2, 'In Process'),
-       (3, 'Failed'),
-       (4, 'Passed');
-
-
- INSERT INTO bank_user (user_id, user_name)
-VALUES
+ insert into bank_user (user_id, user_name)
+values
        (1, 'Pravinkumar Singh'),
        (2, 'Paul'),
        (3, 'Adam'),
        (4, 'Robin');
 
-    INSERT INTO bank_account (account_number, user_id,account_type,balance,blocked_amount,currency_id)
-VALUES
-       (1, 1,'Saving',100.25,0.0,1),
-       (2, 2,'Saving',200.25,0.0,1),
-       (3, 3,'Saving',300.25,0.0,2),
-       (4, 4,'Saving',400.25,0.0,3);
+    insert into bank_account (account_number, user_id,account_type,balance,blocked_amount,currency)
+values
+       (1, 1,'Saving',100.25,0.0,'USD'),
+       (2, 2,'Saving',200.25,0.0,'USD'),
+       (3, 3,'Saving',300.25,0.0,'USD'),
+       (4, 4,'Saving',400.25,0.0,'USD');
+
+
+    insert into user_transaction (from_account_number,to_account_number,amount,currency,creation_date,update_date,transaction_status,comments)
+values
+         (1,2,12.2,'USD',now(),null,'Scheduled','Initiated'),
+         (2,3,25.5,'INR',now(),null,'Scheduled','Initiated');

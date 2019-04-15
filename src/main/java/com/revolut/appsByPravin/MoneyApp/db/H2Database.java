@@ -9,11 +9,11 @@ import java.sql.SQLException;
 
 public class H2Database {
     private static final Logger log = LoggerFactory.getLogger(H2Database.class);
-    private static final HikariDataSource dataSource;
+    private static HikariDataSource dataSource;
     //Setting Up initializing H2 database and initialize it by the schema with test data data
 
-    static {
-        log.info("Initializing H2 In-Memory database");
+    public static void initializeDatabase() {
+        log.info("Started method = initializeDatabase, class = H2Database");
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:h2:mem:test;" +
                 "INIT=RUNSCRIPT FROM 'classpath:db/database_schema.sql'\\;RUNSCRIPT FROM 'classpath:db/initial_data.sql';" +
@@ -23,7 +23,7 @@ public class H2Database {
         dataSource.setPassword("password");
         //We are using frequently manual transaction management in the app. So we don't want to have transaction commit for each request
         dataSource.setAutoCommit(false);
-        log.info("The H2 In-Memory database has been initialized");
+        log.info("Ended method = initializeDatabase, class = H2Database");
     }
 
     private H2Database() {

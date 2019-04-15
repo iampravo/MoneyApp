@@ -10,6 +10,9 @@ public class Account {
     private BigDecimal balance;
     private String localCurrency;
 
+    public Account() {
+    }
+
     public Account(long accountNumber, String accountType, BigDecimal balance, String localCurrency) {
         this.accountNumber = accountNumber;
         this.accountType = accountType;
@@ -49,6 +52,13 @@ public class Account {
         this.localCurrency = localCurrency;
     }
 
+    public void withdraw(BigDecimal amount) {
+        balance = balance.subtract(amount);
+    }
+
+    public void deposit(BigDecimal amount) {
+        balance = balance.add(amount);
+    }
 
     @Override
     public boolean equals(Object o) {

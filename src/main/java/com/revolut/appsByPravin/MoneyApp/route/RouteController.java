@@ -44,13 +44,13 @@ public class RouteController {
                     get("/accounts", (request, response) ->
                             new Gson().toJson(accountController.getAllAccounts(request, response))
                     );
-                    get("/accounts/:accountNumber", (request, response) ->
-                            new Gson().toJson(accountController.getAccountById(request, response))
-                    );
                 });
             });
-            post("trasfer", (request, response) -> {
+            post("transfer", (request, response) -> {
                 return new Gson().toJson(transactionController.transfer(request, response));
+            });
+            post("transactions", (request, response) -> {
+                return new Gson().toJson(transactionController.getAllTransactions(request, response));
             });
         });
 

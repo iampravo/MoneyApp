@@ -9,7 +9,6 @@ public class User {
     private List<Account> accounts;
 
     public User(String userName, long userId, List<Account> accounts) {
-
         this.userName = userName;
         this.userId = userId;
         this.accounts = accounts;
