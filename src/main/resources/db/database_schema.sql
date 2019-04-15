@@ -27,9 +27,9 @@ create TABLE IF NOT EXISTS user_transaction (
   amount DECIMAL(19,4) NOT NULL,
   currency VARCHAR(5) NOT NULL  check (currency IN ('USD', 'INR', 'GBP')),
   creation_date TIMESTAMP NOT NULL,
-  update_date TIMESTAMP,
-  transaction_status VARCHAR(15) NOT NULL  check (transaction_status IN ('Scheduled', 'In Process', 'Failed', 'Passed')),
-  comments VARCHAR(4000),
+  update_date TIMESTAMP NOT NULL,
+  transaction_status VARCHAR(15) NOT NULL  check (transaction_status IN ('Scheduled', 'In Progress', 'Failed', 'Passed')),
+  comments VARCHAR(4000) NOT NULL,
   FOREIGN KEY(from_account_number) REFERENCES bank_account(account_number),
   FOREIGN KEY(to_account_number) REFERENCES bank_account(account_number)
 );

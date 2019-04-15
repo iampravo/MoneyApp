@@ -10,6 +10,7 @@ import com.revolut.appsByPravin.MoneyApp.model.ResponseMapper;
 import com.revolut.appsByPravin.MoneyApp.model.Transaction;
 import com.revolut.appsByPravin.MoneyApp.model.User;
 import com.revolut.appsByPravin.MoneyApp.service.TransactionService;
+import com.revolut.appsByPravin.MoneyApp.service.TransactionServiceImpl;
 import com.revolut.appsByPravin.MoneyApp.utils.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +24,14 @@ import java.util.Optional;
 public class TransactionController {
     private final Logger log = LoggerFactory.getLogger(TransactionController.class);
 
-    private TransactionService transactionService;
+    private TransactionService transactionService = new TransactionServiceImpl();
 
     public ResponseMapper transfer(Request request, Response response) {
         try {
             log.info("Started method = transfer, class = TransactionController" + request.body());
             TransactionDTO transferDTO = new Gson().fromJson(request.body(), TransactionDTO.class);
             if (transferDTO.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new TransactionException("The given amount '" + transferDTO.getAmount().longValue() + "' should be greater than 0");
+                throw new TransactionException("The given amount " + transferDTO.getAmount().longValue() + " should be greater than 0");
             }
             Optional<Transaction> transactionOptional = transactionService.transfer(transferDTO);
             if (!transactionOptional.isPresent()) {
@@ -47,7 +48,7 @@ public class TransactionController {
     public ResponseMapper getAllTransactions(Request request, Response response) {
         log.info("Started method = getAllTransactions, class = TransactionController");
         try {
-            List<Transaction> transactions = transactionService.getAllTransactions();
+                List<Transaction> transactions = transactionService.getAllTransactions();
 
             if (transactions == null) {
                 throw new EntityNotFoundException("transactions not found");

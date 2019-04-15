@@ -19,7 +19,7 @@ import java.util.Optional;
 public class AccountDao implements BaseDao<Account> {
     private final Logger log = LoggerFactory.getLogger(AccountDao.class);
     private static final String GET_ALL_ACCOUNTS_BY_USER_ID = " select * from bank_account where user_id = ?";
-    private static final String SELECT_ACCOUNT_FOR_UPDATE = "select ACCOUNT_NAME, CURRENCY, BALANCE from ACCOUNT where ACCOUNT_ID = ? for update";
+    private static final String SELECT_ACCOUNT_FOR_UPDATE = "select account_type, balance, currency from bank_account where account_number = ? for update";
     private static final String UPDATE_BALANCE = "update bank_account set balance = ? where account_number = ?";
 
 
@@ -29,6 +29,7 @@ public class AccountDao implements BaseDao<Account> {
         List<Account> accounts = new ArrayList<>();
         try (Connection connection = H2Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_ALL_ACCOUNTS_BY_USER_ID)) {
+            statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Account account = new Account();

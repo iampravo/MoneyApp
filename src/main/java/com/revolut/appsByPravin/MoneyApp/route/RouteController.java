@@ -37,19 +37,17 @@ public class RouteController {
                 log.info("Api call received");
             });
             path("/users", () -> {
-                get("", (request, response) -> new Gson()
-                        .toJson(userController.getAllUsers(request, response)));
+                get("", (request, response) -> new Gson().toJson(userController.getAllUsers(request, response)));
+                get("/:userId", (request, response) -> new Gson().toJson(userController.getUserById(request, response)));
                 path("/:userId", () -> {
-                    get("", (request, response) -> new Gson().toJson(userController.getUserById(request, response)));
-                    get("/accounts", (request, response) ->
-                            new Gson().toJson(accountController.getAllAccounts(request, response))
+                    get("/accounts", (request, response) -> new Gson().toJson(accountController.getAllAccounts(request, response))
                     );
                 });
             });
-            post("transfer", (request, response) -> {
+            post("/transfer", (request, response) -> {
                 return new Gson().toJson(transactionController.transfer(request, response));
             });
-            post("transactions", (request, response) -> {
+            get("/transactions", (request, response) -> {
                 return new Gson().toJson(transactionController.getAllTransactions(request, response));
             });
         });

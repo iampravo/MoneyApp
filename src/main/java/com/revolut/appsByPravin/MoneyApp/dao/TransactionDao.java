@@ -4,6 +4,7 @@ import com.revolut.appsByPravin.MoneyApp.data.Currency;
 import com.revolut.appsByPravin.MoneyApp.data.TransactionStatus;
 import com.revolut.appsByPravin.MoneyApp.db.H2Database;
 import com.revolut.appsByPravin.MoneyApp.dto.TransactionDTO;
+import com.revolut.appsByPravin.MoneyApp.exception.ApiException;
 import com.revolut.appsByPravin.MoneyApp.exception.EntityNotFoundException;
 import com.revolut.appsByPravin.MoneyApp.exception.TransactionException;
 import com.revolut.appsByPravin.MoneyApp.model.Account;
@@ -23,9 +24,6 @@ public class TransactionDao implements BaseDao<Transaction> {
     private BaseDao<Account> accountDao = new AccountDao();
 
     private static final String GET_ALL_TRANS = "select * from user_transaction";
-    private static final String GET_ALL_ACCOUNTS_BY_USER_ID = " select b.account_number, b.account_type,b.balance, " +
-            "c.currency_name from bank_account b join currency c on b.currency_id = c.currency_id where  b.user_id = 1\n";
-
     private static final String LOG_TRANSACTION =
             " insert into user_transaction (from_account_number,to_account_number,amount,currency,creation_date,update_date,transaction_status,comments)" +
                     "values (?,?,?,?,?,?,?,?)";
@@ -37,42 +35,43 @@ public class TransactionDao implements BaseDao<Transaction> {
         long fromAccountNumber = transactionDTO.getFromAccountNumber();
         long toAccountNumber = transactionDTO.getToAccountNumber();
 
-        Transaction transaction = Transaction.newTransaction(fromAccountNumber, toAccountNumber, transactionDTO.getAmount(), Instant.now());
-        transaction.setCurrency(Currency.valueOf(transactionDTO.getCurrency()));
+        Transaction transaction = Transaction.newTransaction(fromAccountNumber, toAccountNumber, transactionDTO.getAmount(), Timestamp.from(Instant.now()));
+        transaction.setCurrency(Currency.get(transactionDTO.getCurrency()));
 
         try (Connection connection = H2Database.getConnection()) {
             connection.setAutoCommit(false);
-            save(transaction, connection);
-
             Optional<Account> fromAccount = accountDao.getById(fromAccountNumber, connection);
 
             if (!fromAccount.isPresent()) {
-                throw new TransactionException("Source account with account number = " + fromAccountNumber + " does not exist");
+                throw new TransactionException("Source account with account number " + fromAccountNumber + " does not exist");
             }
             Account fromAccountValue = fromAccount.get();
 
             if (fromAccountValue.getBalance().compareTo(transactionDTO.getAmount()) < 0) {
-                throw new TransactionException("Not enough balance in account with account number = " + fromAccountNumber + "." +
-                        "Balance is = " + fromAccountValue.getBalance() + ". Required: " + transactionDTO.getAmount());
+                throw new TransactionException("Not enough balance in account with account number " + fromAccountNumber + "." +
+                        "Balance is " + fromAccountValue.getBalance() + ". Required: " + transactionDTO.getAmount());
             }
 
 
             Optional<Account> toAccount = accountDao.getById(toAccountNumber, connection);
 
             if (!toAccount.isPresent()) {
-                throw new TransactionException("Destination account with account number = " + fromAccountNumber + " does not exist");
+                throw new TransactionException("Destination account with account number " + fromAccountNumber + " does not exist");
             }
             Account toAccountValue = toAccount.get();
 
-            if (fromAccountValue.getLocalCurrency().equalsIgnoreCase(toAccountValue.getLocalCurrency())) {
-                throw new TransactionException("Can't transfer money from account with currency: " + fromAccountValue.getLocalCurrency() +
+            if (!fromAccountValue.getLocalCurrency().equalsIgnoreCase(toAccountValue.getLocalCurrency())) {
+                throw new TransactionException("Cannot transfer money from account with currency: " + fromAccountValue.getLocalCurrency() +
                         " to account with currency: " + toAccountValue.getLocalCurrency());
             }
-            transaction.setTransactionStatus(TransactionStatus.IN_PROGRESS);
             save(transaction, connection);
+
 
             fromAccountValue.withdraw(transactionDTO.getAmount());
             toAccountValue.deposit(transactionDTO.getAmount());
+
+            transaction.setTransactionStatus(TransactionStatus.IN_PROGRESS);
+            save(transaction, connection);
 
             accountDao.update(fromAccountValue, connection);
             accountDao.update(toAccountValue, connection);
@@ -82,11 +81,14 @@ public class TransactionDao implements BaseDao<Transaction> {
 
             connection.commit();
             return Optional.of(transaction);
+        } catch (ApiException e) {
+            log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
+            throw new TransactionException(e.getMessage());
         } catch (SQLException e) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             save(transaction);
             log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
-            throw new TransactionException("Internal Server Error.");
+            throw new TransactionException("Internal Server Error");
         }
     }
 
@@ -98,7 +100,7 @@ public class TransactionDao implements BaseDao<Transaction> {
             stmt.setLong(2, transaction.getToAccountNumber());
             stmt.setBigDecimal(3, transaction.getAmount());
             stmt.setString(4, transaction.getCurrency().getCurrencyCode());
-            stmt.setTimestamp(5, Timestamp.from(transaction.getCreationDate()));
+            stmt.setTimestamp(5, transaction.getCreationDate());
             stmt.setTimestamp(6, Timestamp.from(Instant.now()));
             stmt.setString(7, transaction.getTransactionStatus().getStatus());
             stmt.setString(8, transaction.getComments());
@@ -116,7 +118,7 @@ public class TransactionDao implements BaseDao<Transaction> {
             stmt.setLong(2, transaction.getToAccountNumber());
             stmt.setBigDecimal(3, transaction.getAmount());
             stmt.setString(4, transaction.getCurrency().getCurrencyCode());
-            stmt.setTimestamp(5, Timestamp.from(transaction.getCreationDate()));
+            stmt.setTimestamp(5, transaction.getCreationDate());
             stmt.setTimestamp(6, Timestamp.from(Instant.now()));
             stmt.setString(7, transaction.getTransactionStatus().getStatus());
             stmt.setString(8, transaction.getComments());
@@ -141,10 +143,10 @@ public class TransactionDao implements BaseDao<Transaction> {
                 transaction.setFromAccountNumber(resultSet.getLong("from_account_number"));
                 transaction.setToAccountNumber(resultSet.getLong("to_account_number"));
                 transaction.setAmount(resultSet.getBigDecimal("amount"));
-                transaction.setCurrency(Currency.valueOf(resultSet.getString("currency")));
-                transaction.setCreationDate(resultSet.getTimestamp("creation_date").toInstant());
-                transaction.setUpdateDate(resultSet.getTimestamp("update_date").toInstant());
-                transaction.setTransactionStatus(TransactionStatus.valueOf(resultSet.getString("transaction_status")));
+                transaction.setCurrency(Currency.get(resultSet.getString("currency")));
+                transaction.setCreationDate(resultSet.getTimestamp("creation_date"));
+                transaction.setUpdateDate(resultSet.getTimestamp("update_date"));
+                transaction.setTransactionStatus(TransactionStatus.get(resultSet.getString("transaction_status")));
                 transaction.setComments(resultSet.getString("comments"));
                 transactions.add(transaction);
             }

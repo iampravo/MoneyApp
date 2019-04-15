@@ -28,7 +28,7 @@ public class ResponseBuilder {
     public static ResponseMapper buildFailedResponse(Exception exception, Response response) {
         log.error(exception.getMessage());
         response.status(HttpURLConnection.HTTP_BAD_REQUEST);
-        return new ResponseMapper(ResultStatus.ERROR, exception.getMessage());
+        return new ResponseMapper(ResultStatus.ERROR, "Internal Server Error");
 
     }
 }

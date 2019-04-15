@@ -4,6 +4,7 @@ import com.revolut.appsByPravin.MoneyApp.data.Currency;
 import com.revolut.appsByPravin.MoneyApp.data.TransactionStatus;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 public class Transaction {
@@ -12,8 +13,8 @@ public class Transaction {
     private long toAccountNumber;
     private BigDecimal amount;
     private Currency currency;
-    private Instant creationDate;
-    private Instant updateDate;
+    private Timestamp creationDate;
+    private Timestamp updateDate;
     private TransactionStatus transactionStatus;
     private String comments;
 
@@ -52,19 +53,19 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Instant getCreationDate() {
+    public Timestamp getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Instant creationDate) {
+    public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Instant getUpdateDate() {
+    public Timestamp getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(Instant updateDate) {
+    public void setUpdateDate(Timestamp updateDate) {
         this.updateDate = updateDate;
     }
 
@@ -93,14 +94,15 @@ public class Transaction {
         this.transactionStatus = transactionStatus;
     }
 
-    public static Transaction newTransaction(long fromAccountNumber, long toAccountNumber, BigDecimal amount, Instant now) {
+    public static Transaction newTransaction(long fromAccountNumber, long toAccountNumber, BigDecimal amount, Timestamp now) {
         Transaction transaction = new Transaction();
         transaction.setFromAccountNumber(fromAccountNumber);
         transaction.setToAccountNumber(toAccountNumber);
         transaction.setAmount(amount);
         transaction.setCreationDate(now);
+        transaction.setUpdateDate(now);
         transaction.setTransactionStatus(TransactionStatus.SCHEDULED);
-        transaction.setComments(Instant.now().toString()+ "Transaction initiated");
+        transaction.setComments("Initiated");
         return transaction;
     }
 }
