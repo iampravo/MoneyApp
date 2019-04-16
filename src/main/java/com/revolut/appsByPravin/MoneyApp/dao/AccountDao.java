@@ -4,7 +4,6 @@ import com.revolut.appsByPravin.MoneyApp.db.H2Database;
 import com.revolut.appsByPravin.MoneyApp.exception.EntityNotFoundException;
 import com.revolut.appsByPravin.MoneyApp.exception.TransactionException;
 import com.revolut.appsByPravin.MoneyApp.model.Account;
-import com.revolut.appsByPravin.MoneyApp.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +31,15 @@ public class AccountDao implements BaseDao<Account> {
     }
 
     @Override
-    public List<Account> getAll(long id) {
+    public List<Account> getAll(final long id) {
         log.info("Started method = getAll, class = AccountDao");
-        List<Account> accounts = new ArrayList<>();
-        try (Connection connection = H2Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_ALL_ACCOUNTS_BY_USER_ID)) {
+        final List<Account> accounts = new ArrayList<>();
+        try (final Connection connection = H2Database.getConnection();
+             final PreparedStatement statement = connection.prepareStatement(GET_ALL_ACCOUNTS_BY_USER_ID)) {
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Account account = new Account();
+                final Account account = new Account();
                 account.setAccountNumber(resultSet.getLong("account_number"));
                 account.setAccountType(resultSet.getString("account_type"));
                 account.setBalance(resultSet.getBigDecimal("balance"));
@@ -48,7 +47,7 @@ public class AccountDao implements BaseDao<Account> {
                 accounts.add(account);
             }
             statement.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
             throw new EntityNotFoundException("Internal Server Error.");
         }
@@ -56,30 +55,26 @@ public class AccountDao implements BaseDao<Account> {
     }
 
 
-    public Optional<Account> getById(long id, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_ACCOUNT_FOR_UPDATE)) {
+    public Optional<Account> getById(final long id, final Connection connection) {
+        try (final PreparedStatement statement = connection.prepareStatement(SELECT_ACCOUNT_FOR_UPDATE)) {
             statement.setLong(1, id);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(new Account(
-                            id,
-                            rs.getString("account_type"),
-                            rs.getBigDecimal("balance"),
-                            rs.getString("currency"))
-                    );
-                } else {
-                    return Optional.empty();
-                }
+            try (final ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? Optional.of(new Account(
+                        id,
+                        rs.getString("account_type"),
+                        rs.getBigDecimal("balance"),
+                        rs.getString("currency"))
+                ) : Optional.empty();
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
             throw new EntityNotFoundException("Internal Server Error.");
         }
     }
 
     @Override
-    public void update(Account account, Connection connection) {
-        try (PreparedStatement ps = connection.prepareStatement(UPDATE_BALANCE)) {
+    public void update(final Account account, final Connection connection) {
+        try (final PreparedStatement ps = connection.prepareStatement(UPDATE_BALANCE)) {
             ps.setBigDecimal(1, account.getBalance());
             ps.setLong(2, account.getAccountNumber());
             if (ps.executeUpdate() == 0) {
@@ -87,7 +82,7 @@ public class AccountDao implements BaseDao<Account> {
                         account.getAccountNumber(), account.getBalance());
                 throw new TransactionException("Failed to update account balance");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
             throw new TransactionException("Internal Server Error.");
         }
@@ -100,22 +95,22 @@ public class AccountDao implements BaseDao<Account> {
     }
 
     @Override
-    public Optional<Account> getById(long id) {
+    public Optional<Account> getById(final long id) {
         return Optional.empty();
     }
 
     @Override
-    public void save(Account account) {
+    public void save(final Account account) {
 
     }
 
     @Override
-    public void save(Account account, Connection connection) {
+    public void save(final Account account, final Connection connection) {
 
     }
 
     @Override
-    public void update(Account account, String[] params) {
+    public void update(final Account account, final String[] params) {
 
     }
 

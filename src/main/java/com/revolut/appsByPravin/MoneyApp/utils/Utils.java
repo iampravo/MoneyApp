@@ -4,10 +4,10 @@ import java.util.Optional;
 
 public class Utils {
 
-    public static Optional<Long> parseLong(String str) {
+    public static Optional<Long> parseLong(final String str) {
         try {
             return Optional.of(Long.parseLong(str));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             return Optional.empty();
         }
     }

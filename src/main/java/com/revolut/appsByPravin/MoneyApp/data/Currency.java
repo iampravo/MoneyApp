@@ -14,12 +14,12 @@ public enum Currency {
     private String currencyCode;
 
     static {
-        for (Currency c : Currency.values()) {
-            lookup.put(c.getCurrencyCode(), c);
+        for (final Currency c : Currency.values()) {
+            lookup.put(c.currencyCode, c);
         }
     }
 
-    Currency(String currencyCode) {
+    Currency(final String currencyCode) {
         this.currencyCode = currencyCode;
     }
 
@@ -27,11 +27,7 @@ public enum Currency {
         return currencyCode;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
-    }
-
-    public static Currency get(String value) {
+    public static Currency get(final String value) {
         return lookup.get(value);
     }
 }

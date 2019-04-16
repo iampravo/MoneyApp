@@ -9,19 +9,15 @@ import com.revolut.appsByPravin.MoneyApp.exception.EntityNotFoundException;
 import com.revolut.appsByPravin.MoneyApp.exception.TransactionException;
 import com.revolut.appsByPravin.MoneyApp.model.Account;
 import com.revolut.appsByPravin.MoneyApp.model.Transaction;
-import javafx.scene.chart.AreaChartBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Singleton
 public class TransactionDao implements BaseDao<Transaction> {
     private final Logger log = LoggerFactory.getLogger(TransactionDao.class);
 
@@ -93,18 +89,18 @@ public class TransactionDao implements BaseDao<Transaction> {
 
                 transaction.setTransactionStatus(TransactionStatus.PASSED);
                 save(transaction, connection);
-            }catch(SQLException e){
+            } catch (ApiException e) {
                 connection.rollback();
+                connection.setAutoCommit(true);
                 transaction.setTransactionStatus(TransactionStatus.FAILED);
+                transaction.setComments(e.getMessage());
                 save(transaction);
                 log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
-                throw new TransactionException("Internal Server Error");
+                throw new TransactionException(e.getMessage());
             }
             connection.commit();
+            connection.setAutoCommit(true);
             return Optional.of(transaction);
-        } catch (ApiException e) {
-            log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
-            throw new TransactionException(e.getMessage());
         } catch (SQLException e) {
             log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
             throw new TransactionException("Internal Server Error");
@@ -187,7 +183,7 @@ public class TransactionDao implements BaseDao<Transaction> {
     }
 
     @Override
-    public Optional<Transaction> getById(long id, Connection connection) throws SQLException {
+    public Optional<Transaction> getById(long id, Connection connection) {
         return Optional.empty();
     }
 

@@ -1,8 +1,6 @@
 package com.revolut.appsByPravin.MoneyApp.data;
 
 
-import com.revolut.appsByPravin.MoneyApp.model.Transaction;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,13 +15,13 @@ public enum TransactionStatus {
     private String status;
 
     static {
-        for (TransactionStatus c : TransactionStatus.values()) {
-            lookup.put(c.getStatus(), c);
+        for (final TransactionStatus c : TransactionStatus.values()) {
+            lookup.put(c.status, c);
         }
     }
 
 
-    TransactionStatus(String status) {
+    TransactionStatus(final String status) {
         this.status = status;
     }
 
@@ -31,12 +29,8 @@ public enum TransactionStatus {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
-
-    public static TransactionStatus get(String value) {
+    public static TransactionStatus get(final String value) {
         return lookup.get(value);
     }
 }

@@ -21,8 +21,6 @@ public class H2Database {
         //TODO login and password should be provided trough system variables
         dataSource.setUsername("username");
         dataSource.setPassword("password");
-        //We are using frequently manual transaction management in the app. So we don't want to have transaction commit for each request
-        dataSource.setAutoCommit(false);
         log.info("Ended method = initializeDatabase, class = H2Database");
     }
 

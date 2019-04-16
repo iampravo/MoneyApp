@@ -13,7 +13,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(long accountNumber, String accountType, BigDecimal balance, String localCurrency) {
+    public Account(final long accountNumber, final String accountType, final BigDecimal balance, final String localCurrency) {
         this.accountNumber = accountNumber;
         this.accountType = accountType;
         this.balance = balance;
@@ -24,15 +24,11 @@ public class Account {
         return accountNumber;
     }
 
-    public void setAccountNumber(long accountNumber) {
+    public void setAccountNumber(final long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
+    public void setAccountType(final String accountType) {
         this.accountType = accountType;
     }
 
@@ -40,7 +36,7 @@ public class Account {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(final BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -48,23 +44,23 @@ public class Account {
         return localCurrency;
     }
 
-    public void setLocalCurrency(String localCurrency) {
+    public void setLocalCurrency(final String localCurrency) {
         this.localCurrency = localCurrency;
     }
 
-    public void withdraw(BigDecimal amount) {
+    public void withdraw(final BigDecimal amount) {
         balance = balance.subtract(amount);
     }
 
-    public void deposit(BigDecimal amount) {
+    public void deposit(final BigDecimal amount) {
         balance = balance.add(amount);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Account account = (Account) o;
+        final Account account = (Account) o;
         return accountNumber == account.accountNumber;
     }
 

@@ -1,19 +1,11 @@
 package com.revolut.appsByPravin.MoneyApp.service;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import com.revolut.appsByPravin.MoneyApp.controller.AccountController;
 import com.revolut.appsByPravin.MoneyApp.dao.AccountDao;
-import com.revolut.appsByPravin.MoneyApp.dao.BaseDao;
 import com.revolut.appsByPravin.MoneyApp.model.Account;
-import com.revolut.appsByPravin.MoneyApp.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public class AccountServiceImpl implements AccountService {
 
@@ -22,7 +14,7 @@ public class AccountServiceImpl implements AccountService {
     public static AccountServiceImpl getInstance() {
         return accountService;
     }
-    private  AccountServiceImpl(AccountDao accountDao) {
+    private  AccountServiceImpl(final AccountDao accountDao) {
         this.accountDao = accountDao;
     }
 
@@ -31,7 +23,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<Account> getAllAccounts(Long userId) {
+    public List<Account> getAllAccounts(final Long userId) {
         log.info("Started method = getAllAccounts, class = AccountServiceImpl");
         return accountDao.getAll(userId);
     }

@@ -5,7 +5,6 @@ import com.revolut.appsByPravin.MoneyApp.data.TransactionStatus;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.Instant;
 
 public class Transaction {
     private long transactionId;
@@ -18,14 +17,7 @@ public class Transaction {
     private TransactionStatus transactionStatus;
     private String comments;
 
-    public Transaction() {
-    }
-
-    public long getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(long transactionId) {
+    public void setTransactionId(final long transactionId) {
         this.transactionId = transactionId;
     }
 
@@ -33,7 +25,7 @@ public class Transaction {
         return fromAccountNumber;
     }
 
-    public void setFromAccountNumber(long fromAccountNumber) {
+    public void setFromAccountNumber(final long fromAccountNumber) {
         this.fromAccountNumber = fromAccountNumber;
     }
 
@@ -41,7 +33,7 @@ public class Transaction {
         return toAccountNumber;
     }
 
-    public void setToAccountNumber(long toAccountNumber) {
+    public void setToAccountNumber(final long toAccountNumber) {
         this.toAccountNumber = toAccountNumber;
     }
 
@@ -49,7 +41,7 @@ public class Transaction {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -57,15 +49,11 @@ public class Transaction {
         return creationDate;
     }
 
-    public void setCreationDate(Timestamp creationDate) {
+    public void setCreationDate(final Timestamp creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Timestamp getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Timestamp updateDate) {
+    public void setUpdateDate(final Timestamp updateDate) {
         this.updateDate = updateDate;
     }
 
@@ -74,7 +62,7 @@ public class Transaction {
         return comments;
     }
 
-    public void setComments(String comments) {
+    public void setComments(final String comments) {
         this.comments = comments;
     }
 
@@ -82,7 +70,7 @@ public class Transaction {
         return currency;
     }
 
-    public void setCurrency(Currency currency) {
+    public void setCurrency(final Currency currency) {
         this.currency = currency;
     }
 
@@ -90,19 +78,34 @@ public class Transaction {
         return transactionStatus;
     }
 
-    public void setTransactionStatus(TransactionStatus transactionStatus) {
+    public void setTransactionStatus(final TransactionStatus transactionStatus) {
         this.transactionStatus = transactionStatus;
     }
 
-    public static Transaction newTransaction(long fromAccountNumber, long toAccountNumber, BigDecimal amount, Timestamp now) {
-        Transaction transaction = new Transaction();
-        transaction.setFromAccountNumber(fromAccountNumber);
-        transaction.setToAccountNumber(toAccountNumber);
-        transaction.setAmount(amount);
-        transaction.setCreationDate(now);
-        transaction.setUpdateDate(now);
-        transaction.setTransactionStatus(TransactionStatus.SCHEDULED);
-        transaction.setComments("Initiated");
+    public static Transaction newTransaction(final long fromAccountNumber, final long toAccountNumber, final BigDecimal amount, final Timestamp now) {
+        final Transaction transaction = new Transaction();
+        transaction.fromAccountNumber = fromAccountNumber;
+        transaction.toAccountNumber = toAccountNumber;
+        transaction.amount = amount;
+        transaction.creationDate = now;
+        transaction.updateDate = now;
+        transaction.transactionStatus = TransactionStatus.SCHEDULED;
+        transaction.comments = "Initiated";
         return transaction;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId=" + transactionId +
+                ", fromAccountNumber=" + fromAccountNumber +
+                ", toAccountNumber=" + toAccountNumber +
+                ", amount=" + amount +
+                ", currency=" + currency +
+                ", creationDate=" + creationDate +
+                ", updateDate=" + updateDate +
+                ", transactionStatus=" + transactionStatus +
+                ", comments='" + comments + '\'' +
+                '}';
     }
 }

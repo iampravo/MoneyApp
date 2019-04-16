@@ -29,16 +29,16 @@ public class UserDao implements BaseDao<User> {
 
     public List<User> getAll() {
         log.info("Started method = getAll, class = UserDao");
-        List<User> users = new ArrayList<>();
-        try (Connection connection = H2Database.getConnection(); PreparedStatement statement = connection.prepareStatement(GET_ALL_USERS)) {
-            ResultSet resultSet = statement.executeQuery();
+        final List<User> users = new ArrayList<>();
+        try (final Connection connection = H2Database.getConnection(); final PreparedStatement statement = connection.prepareStatement(GET_ALL_USERS)) {
+            final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                User user = new User();
+                final User user = new User();
                 user.setUserId(resultSet.getLong("user_id"));
                 user.setUserName(resultSet.getString("user_name"));
                 users.add(user);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
             throw new EntityNotFoundException("Internal server exception.");
         }
@@ -46,13 +46,13 @@ public class UserDao implements BaseDao<User> {
     }
 
     @Override
-    public Optional<User> getById(long userId) {
+    public Optional<User> getById(final long userId) {
         log.info("Started method = getById, class = UserDao");
-        try (Connection connection = H2Database.getConnection(); PreparedStatement statement = connection.prepareStatement(GET_USER_BY_ID)) {
+        try (final Connection connection = H2Database.getConnection(); final PreparedStatement statement = connection.prepareStatement(GET_USER_BY_ID)) {
             statement.setLong(1, userId);
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (final ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    User user = new User();
+                    final User user = new User();
                     user.setUserId(userId);
                     user.setUserName(resultSet.getString("user_name"));
                     return Optional.of(user);
@@ -60,40 +60,40 @@ public class UserDao implements BaseDao<User> {
                     return Optional.empty();
                 }
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
             throw new EntityNotFoundException("Internal server exception.");
         }
     }
 
     @Override
-    public Optional<User> getById(long id, Connection connection) throws SQLException {
+    public Optional<User> getById(final long id, final Connection connection) {
         return Optional.empty();
     }
 
     @Override
-    public void save(User user) {
+    public void save(final User user) {
 
     }
 
     @Override
-    public void save(User user, Connection connection) {
+    public void save(final User user, final Connection connection) {
 
     }
 
     @Override
-    public void update(User user, String[] params) {
+    public void update(final User user, final String[] params) {
 
     }
 
     @Override
-    public void update(User user, Connection connection) {
+    public void update(final User user, final Connection connection) {
 
     }
 
 
     @Override
-    public List<User> getAll(long id) {
+    public List<User> getAll(final long id) {
         return null;
     }
 

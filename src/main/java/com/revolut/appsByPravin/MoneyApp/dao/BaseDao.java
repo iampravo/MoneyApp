@@ -1,7 +1,6 @@
 package com.revolut.appsByPravin.MoneyApp.dao;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ public interface BaseDao<T> {
 
     Optional<T> getById(long id);
 
-    Optional<T> getById(long id, Connection connection) throws SQLException;
+    Optional<T> getById(long id, Connection connection);
 
     void save(T t);
 

@@ -8,38 +8,16 @@ public class User {
     private String userName;
     private List<Account> accounts;
 
-    public User(String userName, long userId, List<Account> accounts) {
-        this.userName = userName;
-        this.userId = userId;
-        this.accounts = accounts;
-    }
-
     public User() {
 
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
+    public void setUserId(final long userId) {
         this.userId = userId;
-    }
-
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
     }
 
     @Override
@@ -47,14 +25,15 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", userName='" + userName + '\'' +
+                ", accounts=" + accounts +
                 '}';
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        final User user = (User) o;
         return userId == user.userId;
     }
 

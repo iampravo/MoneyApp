@@ -6,7 +6,7 @@ public class MalformedRequestException extends ApiException {
     static final long serialVersionUID = -7034897190745768939L;
 
 
-    public MalformedRequestException(String message) {
+    public MalformedRequestException(final String message) {
         super(message,HttpURLConnection.HTTP_BAD_REQUEST);
     }
 }
