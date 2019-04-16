@@ -46,6 +46,13 @@
             <version>2.4.13</version>
             <scope>compile</scope>
         </dependency>
+
+        <!--For dependency injection-->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

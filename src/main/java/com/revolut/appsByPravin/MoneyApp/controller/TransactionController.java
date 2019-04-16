@@ -8,7 +8,6 @@ import com.revolut.appsByPravin.MoneyApp.exception.MalformedRequestException;
 import com.revolut.appsByPravin.MoneyApp.exception.TransactionException;
 import com.revolut.appsByPravin.MoneyApp.model.ResponseMapper;
 import com.revolut.appsByPravin.MoneyApp.model.Transaction;
-import com.revolut.appsByPravin.MoneyApp.model.User;
 import com.revolut.appsByPravin.MoneyApp.service.TransactionService;
 import com.revolut.appsByPravin.MoneyApp.service.TransactionServiceImpl;
 import com.revolut.appsByPravin.MoneyApp.utils.ResponseBuilder;
@@ -22,9 +21,21 @@ import java.util.List;
 import java.util.Optional;
 
 public class TransactionController {
-    private final Logger log = LoggerFactory.getLogger(TransactionController.class);
 
-    private TransactionService transactionService = new TransactionServiceImpl();
+    private static final TransactionController transactionController = new TransactionController(TransactionServiceImpl.getInstance());
+
+    private TransactionController(TransactionServiceImpl transactionServiceImpl) {
+        this.transactionServiceImpl = transactionServiceImpl;
+    }
+
+    public static TransactionController getInstance() {
+        return transactionController;
+    }
+
+
+    private final Logger log = LoggerFactory.getLogger(TransactionController.class);
+    private TransactionService transactionServiceImpl;// = new TransactionServiceImpl();
+
 
     public ResponseMapper transfer(Request request, Response response) {
         try {
@@ -33,7 +44,7 @@ public class TransactionController {
             if (transferDTO.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new TransactionException("The given amount " + transferDTO.getAmount().longValue() + " should be greater than 0");
             }
-            Optional<Transaction> transactionOptional = transactionService.transfer(transferDTO);
+            Optional<Transaction> transactionOptional = transactionServiceImpl.transfer(transferDTO);
             if (!transactionOptional.isPresent()) {
                 throw new TransactionException("Transaction could not be completed");
             }
@@ -48,7 +59,7 @@ public class TransactionController {
     public ResponseMapper getAllTransactions(Request request, Response response) {
         log.info("Started method = getAllTransactions, class = TransactionController");
         try {
-                List<Transaction> transactions = transactionService.getAllTransactions();
+            List<Transaction> transactions = transactionServiceImpl.getAllTransactions();
 
             if (transactions == null) {
                 throw new EntityNotFoundException("transactions not found");

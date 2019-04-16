@@ -4,7 +4,8 @@ values
        (1, 'Pravinkumar Singh'),
        (2, 'Paul'),
        (3, 'Adam'),
-       (4, 'Robin');
+       (4, 'Robin'),
+       (5, 'Rachel');
 
     insert into bank_account (account_number, user_id,account_type,balance,blocked_amount,currency)
 values

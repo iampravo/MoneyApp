@@ -1,19 +1,33 @@
 package com.revolut.appsByPravin.MoneyApp.service;
 
+import javax.inject.Singleton;
+
 import com.revolut.appsByPravin.MoneyApp.controller.TransactionController;
+import com.revolut.appsByPravin.MoneyApp.dao.AccountDao;
+import com.revolut.appsByPravin.MoneyApp.dao.BaseDao;
 import com.revolut.appsByPravin.MoneyApp.dao.TransactionDao;
 import com.revolut.appsByPravin.MoneyApp.dto.TransactionDTO;
 import com.revolut.appsByPravin.MoneyApp.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
 public class TransactionServiceImpl implements TransactionService {
-    private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    private static final TransactionServiceImpl transactionService = new TransactionServiceImpl(TransactionDao.getInstance());
 
-    private TransactionDao transactionDao = new TransactionDao();
+    public static TransactionServiceImpl getInstance() {
+        return transactionService;
+    }
+
+    private TransactionServiceImpl(TransactionDao transactionDao) {
+        this.transactionDao = transactionDao;
+    }
+
+    private TransactionDao transactionDao;// = new TransactionDao();
+    private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Override
     public Optional<Transaction> transfer(TransactionDTO transactionDTO) {

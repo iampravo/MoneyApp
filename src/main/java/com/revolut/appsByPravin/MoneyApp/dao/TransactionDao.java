@@ -9,20 +9,34 @@ import com.revolut.appsByPravin.MoneyApp.exception.EntityNotFoundException;
 import com.revolut.appsByPravin.MoneyApp.exception.TransactionException;
 import com.revolut.appsByPravin.MoneyApp.model.Account;
 import com.revolut.appsByPravin.MoneyApp.model.Transaction;
+import javafx.scene.chart.AreaChartBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Singleton
 public class TransactionDao implements BaseDao<Transaction> {
     private final Logger log = LoggerFactory.getLogger(TransactionDao.class);
 
-    private BaseDao<Account> accountDao = new AccountDao();
+    private static final TransactionDao transactionDao = new TransactionDao(AccountDao.getInstance());
 
+    public static TransactionDao getInstance() {
+        return transactionDao;
+    }
+
+    private TransactionDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+
+    private AccountDao accountDao;
     private static final String GET_ALL_TRANS = "select * from user_transaction";
     private static final String LOG_TRANSACTION =
             " insert into user_transaction (from_account_number,to_account_number,amount,currency,creation_date,update_date,transaction_status,comments)" +
@@ -40,53 +54,58 @@ public class TransactionDao implements BaseDao<Transaction> {
 
         try (Connection connection = H2Database.getConnection()) {
             connection.setAutoCommit(false);
-            Optional<Account> fromAccount = accountDao.getById(fromAccountNumber, connection);
+            try {
+                Optional<Account> fromAccount = accountDao.getById(fromAccountNumber, connection);
 
-            if (!fromAccount.isPresent()) {
-                throw new TransactionException("Source account with account number " + fromAccountNumber + " does not exist");
+                if (!fromAccount.isPresent()) {
+                    throw new TransactionException("Source account with account number " + fromAccountNumber + " does not exist");
+                }
+                Account fromAccountValue = fromAccount.get();
+
+                if (fromAccountValue.getBalance().compareTo(transactionDTO.getAmount()) < 0) {
+                    throw new TransactionException("Not enough balance in account with account number " + fromAccountNumber + "." +
+                            "Balance is " + fromAccountValue.getBalance() + ". Required: " + transactionDTO.getAmount());
+                }
+
+
+                Optional<Account> toAccount = accountDao.getById(toAccountNumber, connection);
+
+                if (!toAccount.isPresent()) {
+                    throw new TransactionException("Destination account with account number " + fromAccountNumber + " does not exist");
+                }
+                Account toAccountValue = toAccount.get();
+
+                if (!fromAccountValue.getLocalCurrency().equalsIgnoreCase(toAccountValue.getLocalCurrency())) {
+                    throw new TransactionException("Cannot transfer money from account with currency: " + fromAccountValue.getLocalCurrency() +
+                            " to account with currency: " + toAccountValue.getLocalCurrency());
+                }
+                save(transaction, connection);
+
+
+                fromAccountValue.withdraw(transactionDTO.getAmount());
+                toAccountValue.deposit(transactionDTO.getAmount());
+
+                transaction.setTransactionStatus(TransactionStatus.IN_PROGRESS);
+                save(transaction, connection);
+
+                accountDao.update(fromAccountValue, connection);
+                accountDao.update(toAccountValue, connection);
+
+                transaction.setTransactionStatus(TransactionStatus.PASSED);
+                save(transaction, connection);
+            }catch(SQLException e){
+                connection.rollback();
+                transaction.setTransactionStatus(TransactionStatus.FAILED);
+                save(transaction);
+                log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
+                throw new TransactionException("Internal Server Error");
             }
-            Account fromAccountValue = fromAccount.get();
-
-            if (fromAccountValue.getBalance().compareTo(transactionDTO.getAmount()) < 0) {
-                throw new TransactionException("Not enough balance in account with account number " + fromAccountNumber + "." +
-                        "Balance is " + fromAccountValue.getBalance() + ". Required: " + transactionDTO.getAmount());
-            }
-
-
-            Optional<Account> toAccount = accountDao.getById(toAccountNumber, connection);
-
-            if (!toAccount.isPresent()) {
-                throw new TransactionException("Destination account with account number " + fromAccountNumber + " does not exist");
-            }
-            Account toAccountValue = toAccount.get();
-
-            if (!fromAccountValue.getLocalCurrency().equalsIgnoreCase(toAccountValue.getLocalCurrency())) {
-                throw new TransactionException("Cannot transfer money from account with currency: " + fromAccountValue.getLocalCurrency() +
-                        " to account with currency: " + toAccountValue.getLocalCurrency());
-            }
-            save(transaction, connection);
-
-
-            fromAccountValue.withdraw(transactionDTO.getAmount());
-            toAccountValue.deposit(transactionDTO.getAmount());
-
-            transaction.setTransactionStatus(TransactionStatus.IN_PROGRESS);
-            save(transaction, connection);
-
-            accountDao.update(fromAccountValue, connection);
-            accountDao.update(toAccountValue, connection);
-
-            transaction.setTransactionStatus(TransactionStatus.PASSED);
-            save(transaction, connection);
-
             connection.commit();
             return Optional.of(transaction);
         } catch (ApiException e) {
             log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
             throw new TransactionException(e.getMessage());
         } catch (SQLException e) {
-            transaction.setTransactionStatus(TransactionStatus.FAILED);
-            save(transaction);
             log.error("Transaction could be not completed " + transactionDTO.toString(), e.getMessage());
             throw new TransactionException("Internal Server Error");
         }

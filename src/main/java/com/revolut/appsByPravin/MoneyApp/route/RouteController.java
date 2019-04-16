@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.revolut.appsByPravin.MoneyApp.controller.AccountController;
 import com.revolut.appsByPravin.MoneyApp.controller.TransactionController;
 import com.revolut.appsByPravin.MoneyApp.controller.UserController;
+import com.revolut.appsByPravin.MoneyApp.service.AccountServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.net.www.protocol.http.HttpURLConnection;
@@ -12,20 +13,25 @@ import static spark.Spark.*;
 
 public class RouteController {
 
-    //@todo try to apply inject over here
-    private AccountController accountController;
-    private UserController userController;
-    private TransactionController transactionController;
-    private final Logger log = LoggerFactory.getLogger(RouteController.class);
+    private static final RouteController routeController = new RouteController(AccountController.getInstance(), UserController.getInstance(), TransactionController.getInstance());
 
-    public RouteController(AccountController accountController, UserController userController, TransactionController transactionController) {
+    private RouteController(AccountController accountController, UserController userController, TransactionController transactionController) {
         this.accountController = accountController;
         this.userController = userController;
         this.transactionController = transactionController;
     }
 
+    public static RouteController getInstance() {
+        return routeController;
+    }
+
+    private AccountController accountController;
+    private UserController userController;
+    private TransactionController transactionController;
+    private final Logger log = LoggerFactory.getLogger(RouteController.class);
+
+
     public static void initializeRoutes() {
-        RouteController routeController = new RouteController(new AccountController(), new UserController(), new TransactionController());
         routeController.initialize();
     }
 

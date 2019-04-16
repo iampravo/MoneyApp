@@ -17,6 +17,13 @@ import java.util.Optional;
 public class UserDao implements BaseDao<User> {
     private final Logger log = LoggerFactory.getLogger(UserDao.class);
 
+    private static final UserDao userDao = new UserDao();
+    private UserDao() {
+    }
+    public static UserDao getInstance() {
+        return userDao;
+    }
+
     private static final String GET_ALL_USERS = " select * from bank_user ";
     private static final String GET_USER_BY_ID = "select user_id, user_name from bank_user where user_id = ?";
 

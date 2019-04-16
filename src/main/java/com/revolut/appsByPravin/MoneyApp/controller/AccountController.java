@@ -18,9 +18,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class AccountController {
-    private final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    private AccountService accountService = new AccountServiceImpl();
+    private static final AccountController accountController = new AccountController(AccountServiceImpl.getInstance());
+
+    private AccountController(AccountServiceImpl accountServiceImpl) {
+        this.accountServiceImpl = accountServiceImpl;
+    }
+
+    public static AccountController getInstance() {
+        return accountController;
+    }
+
+    private AccountService accountServiceImpl;// = new AccountServiceImpl();
+    private final Logger log = LoggerFactory.getLogger(AccountController.class);
 
     public ResponseMapper getAllAccounts(Request request, Response response) {
         log.info("Started method = getAllAccounts, class = AccountController");
@@ -32,7 +42,7 @@ public class AccountController {
                 throw new MalformedRequestException("The given UserId '" + userIdParam + "' could not be parsed from request Parameter");
             }
 
-            List<Account> accounts = accountService.getAllAccounts(userId.get());
+            List<Account> accounts = accountServiceImpl.getAllAccounts(userId.get());
 
             if (accounts.isEmpty()) {
                 throw new EntityNotFoundException("No accounts details found for the given User Id '" + userId + "'.");

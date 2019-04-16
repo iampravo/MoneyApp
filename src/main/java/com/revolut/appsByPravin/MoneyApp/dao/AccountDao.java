@@ -16,12 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class AccountDao implements BaseDao<Account> {
+
     private final Logger log = LoggerFactory.getLogger(AccountDao.class);
     private static final String GET_ALL_ACCOUNTS_BY_USER_ID = " select * from bank_account where user_id = ?";
     private static final String SELECT_ACCOUNT_FOR_UPDATE = "select account_type, balance, currency from bank_account where account_number = ? for update";
     private static final String UPDATE_BALANCE = "update bank_account set balance = ? where account_number = ?";
 
+    private static final AccountDao accountDao = new AccountDao();
+    private AccountDao() {
+    }
+    public static AccountDao getInstance() {
+        return accountDao;
+    }
 
     @Override
     public List<Account> getAll(long id) {
@@ -39,6 +47,7 @@ public class AccountDao implements BaseDao<Account> {
                 account.setLocalCurrency(resultSet.getString("currency"));
                 accounts.add(account);
             }
+            statement.close();
         } catch (SQLException e) {
             log.error(e.getMessage());
             throw new EntityNotFoundException("Internal Server Error.");

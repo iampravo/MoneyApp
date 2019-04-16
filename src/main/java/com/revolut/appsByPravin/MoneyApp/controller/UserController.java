@@ -18,9 +18,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserController {
-    private final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final UserController userController = new UserController(UserServiceImpl.getInstance());
 
-    private UserService userService = new UserServiceImpl();
+    private  UserController(UserServiceImpl transactionServiceImpl) {
+        this.userService = transactionServiceImpl;
+    }
+
+    public static UserController getInstance() {
+        return userController;
+    }
+
+
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
+    private UserService userService ;
 
     public ResponseMapper getAllUsers(Request request, Response response) {
         log.info("Started method = getAllUsers, class = UserController");
