@@ -49,7 +49,7 @@ port **8182**
 **Spark Java Main Application** : This is the Main class of the this
 SparkJava project.
  
-#### Controller 
+### Controllers 
 
   **RouteController** : This RouteController class initializes and
   manages all the routes of this project.
@@ -63,7 +63,7 @@ SparkJava project.
   **TransactionController** : This TransactionController class manages all user
  activity.
  
-#### Static Data
+### Static Data
  
  **Currency** :
  ```sh
@@ -79,7 +79,7 @@ SparkJava project.
  PASSED("Passed");
  ```
  
-#### In Memory Database
+### In Memory Database
  
  **H2Database** : In memory database, i.e. H2Database, has its
  schema('resources/db/database_schema.sql') and initial data
@@ -98,7 +98,7 @@ SparkJava project.
     }
    ```
    
-#### Exception
+### Exception
 - ApiException extends RuntimeException
 - EntityNotFoundException extends ApiException
 - MalformedRequestException extends ApiException 
