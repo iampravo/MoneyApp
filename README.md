@@ -108,8 +108,8 @@ SparkJava project.
 ## Endpoint definitions
 
 ### /moneyapp/v1/* 
-This endpoint is used to log the API call. This can be used to
-authenticate the user.
+This endpoint is used to log the API call. This can be used to authenticate the user.
+
 ---
 ### GET /moneyapp/v1/users
 This endpoint gets all the user available in database.
