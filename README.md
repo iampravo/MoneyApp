@@ -110,8 +110,7 @@ SparkJava project.
 ### /moneyapp/v1/* 
 This endpoint is used to log the API call. This can be used to
 authenticate the user.
-
-
+---
 ### GET /moneyapp/v1/users
 This endpoint gets all the user available in database.
 
@@ -148,7 +147,7 @@ Response
     ]
 }
 ```
-
+---
 
 ### GET /moneyapp/v1/users/:userId
 This endpoint gets the user available in database for given 'userId'.
@@ -170,7 +169,7 @@ Response
     }
 }
 ```
-
+---
 
 ### GET /moneyapp/v1/users/:userId/accounts
 This endpoint gets all the accounts linked to user for given 'userId',
@@ -195,7 +194,7 @@ Response
     ]
 }
 ```
-
+---
 
 ### GET /moneyapp/v1/transactions
 This endpoint gets all the transaction available in database.
@@ -223,7 +222,7 @@ Response
     ]
 }
 ```
-
+---
 
 ### POST /moneyapp/v1/transfer
 This endpoint transfer the amount from 'fromAccountNumber' to
@@ -262,6 +261,7 @@ Response
     }
 }
 ```
+---
 
 ### Exception
 Request 
