@@ -49,6 +49,11 @@ public class RouteController {
             });
         });
 
+        notFound((request, response) -> {
+            log.info("Unknown API path.");
+            response.status(HttpURLConnection.HTTP_NOT_FOUND);
+            return new Gson().toJson("Please provide the correct Api path.");
+        });
         exception(Exception.class, (e, request, response) -> {
             log.info("Internal server error.");
             response.status(HttpURLConnection.HTTP_INTERNAL_ERROR);

@@ -51,6 +51,8 @@ public class TransactionDao implements BaseDao<Transaction> {
         try (Connection connection = H2Database.getConnection()) {
             connection.setAutoCommit(false);
             try {
+                save(transaction, connection);
+
                 Optional<Account> fromAccount = accountDao.getById(fromAccountNumber, connection);
 
                 if (!fromAccount.isPresent()) {
@@ -75,9 +77,7 @@ public class TransactionDao implements BaseDao<Transaction> {
                     throw new TransactionException("Cannot transfer money from account with currency: " + fromAccountValue.getLocalCurrency() +
                             " to account with currency: " + toAccountValue.getLocalCurrency());
                 }
-                save(transaction, connection);
-
-
+                
                 fromAccountValue.withdraw(transactionDTO.getAmount());
                 toAccountValue.deposit(transactionDTO.getAmount());
 

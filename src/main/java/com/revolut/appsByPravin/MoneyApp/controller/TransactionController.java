@@ -43,6 +43,9 @@ public class TransactionController {
             if (transferDTO.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new TransactionException("The given amount " + transferDTO.getAmount().longValue() + " should be greater than 0");
             }
+            if (transferDTO.getFromAccountNumber() == transferDTO.getToAccountNumber()) {
+                throw new TransactionException("Payee's and Payer's have same account number.");
+            }
             final Optional<Transaction> transactionOptional = transactionServiceImpl.transfer(transferDTO);
             if (!transactionOptional.isPresent()) {
                 throw new TransactionException("Transaction could not be completed");

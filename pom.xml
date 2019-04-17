@@ -9,6 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <name>Money App for Revolut</name>
 
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
     <dependencies>
 
         <!-- Spark Framework for REST API -->
