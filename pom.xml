@@ -39,7 +39,7 @@
             <version>1.4.190</version>
         </dependency>
 
-        <!--Hikari Data source -->
+        <!--Connection Pooling -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP-java7</artifactId>

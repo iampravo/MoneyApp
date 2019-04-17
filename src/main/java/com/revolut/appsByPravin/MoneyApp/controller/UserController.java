@@ -61,7 +61,7 @@ public class UserController {
             final Optional<User> user = userService.getUserById(userId.get());
 
             if (!user.isPresent()) {
-                throw new EntityNotFoundException("The given User Id '" + userId + "' could not be retrieved");
+                throw new EntityNotFoundException("The given User Id '" + userId.get() + "' could not be retrieved");
             }
             return ResponseBuilder.buildSuccessResponse(user, response);
 
