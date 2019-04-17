@@ -12,7 +12,7 @@ public class AccountControllerITest {
     private static final Logger log = LoggerFactory.getLogger(AccountControllerITest.class);
 
     @Test
-    public void testAccountControllerEndPoints(){
+    public void testGetAccontDetailByUserId(){
         RestAssured.given()
                 .when()
                 .get("http://localhost:8182/moneyapp/v1/users/1/accounts")
@@ -21,18 +21,27 @@ public class AccountControllerITest {
                 .statusCode(200);
     }
 
+    @Test
+    public void testGetAccontDetailByUserId2(){
+        RestAssured.given()
+                .when()
+                .get("http://localhost:8182/moneyapp/v1/users/2/accounts")
+                .then()
+                .assertThat()
+                .statusCode(200);
+    }
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         configureAndStartWebServer();
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         stopWebServer();
     }
 
-    private void configureAndStartWebServer() {
+    private static void configureAndStartWebServer() {
 
         log.info("Starting Application");
         Spark.port(8182);
@@ -42,8 +51,7 @@ public class AccountControllerITest {
         log.info("Application has started successfully");
     }
 
-    private void stopWebServer() {
+    private static void stopWebServer() {
         Spark.stop();
     }
-
 }
