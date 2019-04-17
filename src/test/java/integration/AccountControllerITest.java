@@ -12,7 +12,7 @@ public class AccountControllerITest {
     private static final Logger log = LoggerFactory.getLogger(AccountControllerITest.class);
 
     @Test
-    public void testGetAccontDetailByUserId(){
+    public void testGetAccountDetailByUserId(){
         RestAssured.given()
                 .when()
                 .get("http://localhost:8182/moneyapp/v1/users/1/accounts")
@@ -22,7 +22,7 @@ public class AccountControllerITest {
     }
 
     @Test
-    public void testGetAccontDetailByUserId2(){
+    public void testGetAccountDetailByUserId2(){
         RestAssured.given()
                 .when()
                 .get("http://localhost:8182/moneyapp/v1/users/2/accounts")
@@ -54,4 +54,5 @@ public class AccountControllerITest {
     private static void stopWebServer() {
         Spark.stop();
     }
+
 }
