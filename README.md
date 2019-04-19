@@ -22,7 +22,7 @@ org.eclipse.jetty.server.Server - Started @713ms
 | Connection Pooling  | Hikari |
 | Build Tool  | Maven |
 | SCM   | Github |
-| Integration Testing    | Test |
+| Integration Testing    | Rest Assured |
 | Unit Testing    | Mockito |
 
 
